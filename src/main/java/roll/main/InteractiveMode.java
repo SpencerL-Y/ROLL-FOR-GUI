@@ -37,7 +37,7 @@ import roll.words.Word;
 /**
  * @author Yong Li (liyong@ios.ac.cn)
  * */
-
+add pipes in this file
 public class InteractiveMode {
     
     public static void interact(Options options, PipedOutputStream out, PipedInputStream in) {
@@ -220,7 +220,7 @@ public class InteractiveMode {
     }
     
     private static class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>, HashableValue> {
-
+    	
         @Override
         public HashableValue answerMembershipQuery(Query<HashableValue> query) {
             Word prefix = query.getPrefix();
