@@ -16,6 +16,9 @@
 
 package roll.learner;
 
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.query.Query;
@@ -34,13 +37,19 @@ public abstract class LearnerBase<M> implements Learner<M, HashableValue> {
     protected final Alphabet alphabet;
     protected final MembershipOracle<HashableValue> membershipOracle;
     protected final Options options;
+    // add pipes
+    protected final PipedInputStream rollIn;
+    protected final PipedOutputStream rollOut;
     
     public LearnerBase(Options options, Alphabet alphabet
-            , MembershipOracle<HashableValue> membershipOracle) {
+            , MembershipOracle<HashableValue> membershipOracle,
+            PipedOutputStream rollOut, PipedInputStream rollIn) {
         assert options != null && alphabet != null && membershipOracle != null;
         this.options = options;
         this.alphabet = alphabet;
         this.membershipOracle = membershipOracle;
+        this.rollIn = rollIn;
+        this.rollOut = rollOut;
     }
     
     @Override

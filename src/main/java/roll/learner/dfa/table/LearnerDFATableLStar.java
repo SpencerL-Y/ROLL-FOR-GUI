@@ -30,6 +30,8 @@ import roll.automata.DFA;
 import roll.automata.StateDFA;
 import roll.automata.StateFA;
 import roll.learner.LearnerType;
+import roll.learner.nba.lomega.PipedInputStream;
+import roll.learner.nba.lomega.PipedOutputStream;
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.query.Query;
@@ -51,8 +53,8 @@ import roll.words.Word;
 public class LearnerDFATableLStar extends LearnerDFATable {
 
     public LearnerDFATableLStar(Options options
-            , Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle) {
-        super(options, alphabet, membershipOracle);
+            , Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
+        super(options, alphabet, membershipOracle, rollOut, rollIn);
     }
     
     // main loop for L* algorithm 

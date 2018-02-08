@@ -19,6 +19,8 @@ package roll.main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ import roll.words.Word;
 
 public class InteractiveMode {
     
-    public static void interact(Options options) {
+    public static void interact(Options options, PipedOutputStream out, PipedInputStream in) {
         // prepare the alphabet
         Alphabet alphabet = prepareAlphabet(options);
         TeacherNBAInteractive teacher = new TeacherNBAInteractive();

@@ -19,7 +19,10 @@ package roll.main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.PrintStream;
 
 import roll.automata.FDFA;
@@ -48,120 +51,45 @@ import roll.util.Timer;
  * 
  * @author Yong Li (liyong@ios.ac.cn)
  * */
-public final class ROLL {
-    
-    public static void main(String[] args) {
-        // select mode to execute
+public final class ROLL extends Thread{
+	
+	private String[] args;
+	private PipedOutputStream rollOut;
+	private PipedInputStream rollIn;
+	
+	public ROLL(String[] args, PipedInputStream intIn, PipedOutputStream intOut) throws IOException {
+		this.args = args;
+;		this.rollOut = new PipedOutputStream(intIn);
+		this.rollIn = new PipedInputStream(intOut);
+	}
+	
+	@Override
+	public void run() {
+		// select mode to execute
         CLParser clParser = new CLParser();
-        clParser.prepareOptions(args);
+        clParser.prepareOptions(this.args);
         Options options = clParser.getOptions();
         options.log.println("\n" + options.toString());
         switch(options.runningMode) {
-        case TESTING:
-            options.log.info("Testing ROLL...");
-            runTestingMode(options);
-            break;
         case PLAYING:
             options.log.info("ROLL for interactive play...");
             runPlayingMode(options);
             break;
-        case CONVERTING:
-            options.log.info("ROLL for format conversion...");
-            runConvertingMode(options);
-            break;
-        case COMPLEMENTING:
-            options.log.info("ROLL for BA complementation...");
-            runComplementingMode(options);
-            break;
-        case INCLUDING:
-            options.log.info("ROLL for BA inclusion testing...");
-            runIncludingMode(options);
-            break;
         case LEARNING:
             options.log.info("ROLL for BA learning via rabit...");
-            runLearningMode(options, false);
-            break;
-        case SAMPLING:
-            options.log.info("ROLL for BA learning via sampling...");
-            runLearningMode(options, true);
+            runLearningMode(options, false, this.rollOut, this.rollIn);
             break;
         default :
                 options.log.err("Incorrect running mode.");
         }
-    }
-
-
-    private static void runTestingMode(Options options) {
-        final int numLetter = 2;
-        for(int n = 0; n < options.numOfTests; n ++) {
-            options.log.println("Testing case " + (n + 1) + " ...");
-            NBA nba = NBAGenerator.getRandomNBA(options.numOfStatesForTest, numLetter);
-            try{
-                System.out.println("target: \n" + nba.toString());
-                Executor.executeRABIT(options, nba);
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-                options.log.err("Exception occured, Learning aborted...");
-                System.out.println(nba.toString());
-                System.exit(-1);
-            }
-            options.log.info("Done for case " + (n + 1));
-        }
+	}
+    
+    
+    public  void runPlayingMode(Options options) {
+        InteractiveMode.interact(options, this.rollOut, this.rollIn);
     }
     
-    private static void runConvertingMode(Options options) {
-        // prepare the parser
-        PairParser parser = UtilParser.prepare(options, options.inputA, options.inputB, options.format);
-        NBA A = parser.getA();
-        NBA B = parser.getB();
-        OutputStream stream = options.log.getOutputStream();
-        PrintStream out = new PrintStream(stream);
-        options.log.println("\nA input automaton:");
-        parser.print(A, options.log.getOutputStream());
-        options.log.println("\nB input automaton:");
-        parser.print(B, options.log.getOutputStream());
-        options.log.println("\noutput automata:");
-        PrintStream outA = null, outB = null;
-        if(options.outputA != null && options.outputB != null) {
-            try {
-                outA = new PrintStream(new FileOutputStream(options.outputA));
-                outB = new PrintStream(new FileOutputStream(options.outputB));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }else {
-            outA = out;
-            outB = out;
-        }
-        switch (options.format) {
-        case BA:
-            NBAInclusionCheckTool.outputHOAStream(A, outA); // BA to HOA
-            out.println("\n");
-            NBAInclusionCheckTool.outputHOAStream(B, outB); // BA to HOA
-            break;
-        case HOA:
-            outA.println(A.toBA());
-            out.println("\n");
-            outB.println(B.toBA());
-            break;
-        default:
-            throw new UnsupportedOperationException("Unknow input format");
-        }
-        if(options.outputA != null && options.outputB != null) {
-            outA.close();
-            outB.close();
-            out.close();
-        }else {
-            out.close();
-        }
-    }
-    
-    public static void runPlayingMode(Options options) {
-        InteractiveMode.interact(options);
-    }
-    
-    public static void runLearningMode(Options options, boolean sampling) {
+    public static void runLearningMode(Options options, boolean sampling, PipedOutputStream out, PipedInputStream in) {
 
         Timer timer = new Timer();
         timer.start();
@@ -200,87 +128,9 @@ public final class ROLL {
         
     }
 
-    public static void runComplementingMode(Options options) {
-        
-        Timer timer = new Timer();
-        timer.start();
-        // prepare the parser
-        Parser parser = UtilParser.prepare(options, options.inputFile, options.format);
-        NBA input = parser.parse();
-        options.stats.numOfLetters = input.getAlphabetSize();
-        options.stats.numOfStatesInTraget = input.getStateSize();
-        
-        TeacherNBAComplement teacher = new TeacherNBAComplement(options, input);
-        LearnerFDFA learner = UtilLOmega.getLearnerFDFA(options, input.getAlphabet(), teacher);
-        options.log.println("Initializing learner...");
-        
-        long t = timer.getCurrentTime();
-        learner.startLearning();
-        t = timer.getCurrentTime() - t;
-        options.stats.timeOfLearner += t;
-        FDFA hypothesis = null;
-        while(true) {
-            options.log.verbose("Table/Tree is both closed and consistent\n" + learner.toString());
-            hypothesis = learner.getHypothesis();
-            // along with ce
-            options.log.println("Resolving equivalence query for hypothesis...  ");
-            Query<HashableValue> ceQuery = teacher.answerEquivalenceQuery(hypothesis);
-            boolean isEq = ceQuery.getQueryAnswer().getLeft();
-            if(isEq) {
-                // store statistics
-                options.stats.numOfStatesInLeading = hypothesis.getLeadingDFA().getStateSize();
-                for(int state = 0; state < hypothesis.getLeadingDFA().getStateSize(); state ++) {
-                    options.stats.numOfStatesInProgress.add(hypothesis.getProgressDFA(state).getStateSize());
-                }
-                break;
-            }
-            // counterexample analysis
-            ceQuery.answerQuery(new HashableValueBoolean(ceQuery.getQueryAnswer().getRight()));
-            TranslatorFDFA translator = new TranslatorFDFAUnder(learner);
-            translator.setQuery(ceQuery);
-            while(translator.canRefine()) {
-                ceQuery = translator.translate();
-                options.log.verbose("Counterexample is: " + ceQuery.toString());
-                t = timer.getCurrentTime();
-                options.log.println("Refining current hypothesis...");
-                learner.refineHypothesis(ceQuery);
-                t = timer.getCurrentTime() - t;
-                options.stats.timeOfLearner += t;
-                if(options.optimization != Options.Optimization.LAZY_EQ) break;
-            }            
-        }
-        options.log.println("Learning completed...");
-        // output target automaton
-        if(options.outputFile != null) {
-            try {
-                parser.print(options.stats.hypothesis, new FileOutputStream(new File(options.outputFile)));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }else {
-            options.log.println("\ntarget automaton:");
-            parser.print(input, options.log.getOutputStream());
-            options.log.println("\nhypothesis automaton:");
-            parser.print(options.stats.hypothesis, options.log.getOutputStream());
-        }
-        parser.close();
-        // output statistics
-        options.stats.numOfStatesInHypothesis = options.stats.hypothesis.getStateSize();
-        options.stats.numOfTransInTraget = NBAOperations.getNumberOfTransitions(input);
-        options.stats.numOfTransInHypothesis = NBAOperations.getNumberOfTransitions(options.stats.hypothesis);
-        timer.stop();
-        options.stats.timeInTotal = timer.getTimeElapsed();
-        
-        options.stats.print();
-        teacher.print();
-    }
     
-    
-    public static void runIncludingMode(Options options) {
-        
-        // a bit complicated so move the code to another file
-        NBAInclusionCheck.execute(options);
-        
-    }
+
+
+	
 
 }

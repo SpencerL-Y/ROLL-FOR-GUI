@@ -43,8 +43,8 @@ public class LearnerNBALOmega extends LearnerBase<NBA>{
     private boolean alreadyStarted = false;
     private NBA nba;
     private final LearnerFDFA fdfaLearner;
-    public LearnerNBALOmega(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle) {
-        super(options, alphabet, membershipOracle);
+    public LearnerNBALOmega(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
+        super(options, alphabet, membershipOracle, rollOut, rollIn);
         fdfaLearner = UtilLOmega.getLearnerFDFA(options, alphabet, membershipOracle);
     }
 
