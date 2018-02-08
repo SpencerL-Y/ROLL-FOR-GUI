@@ -22,8 +22,6 @@ import java.util.List;
 import roll.automata.DFA;
 import roll.automata.StateDFA;
 import roll.learner.LearnerDFA;
-import roll.learner.nba.lomega.PipedInputStream;
-import roll.learner.nba.lomega.PipedOutputStream;
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.query.Query;
@@ -40,8 +38,8 @@ public abstract class LearnerDFATable extends LearnerDFA {
     protected ObservationTableAbstract observationTable;
     
     public LearnerDFATable(Options options, Alphabet alphabet
-            , MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
-        super(options, alphabet, membershipOracle, rollOut, rollIn);
+            , MembershipOracle<HashableValue> membershipOracle) {
+        super(options, alphabet, membershipOracle);
         this.observationTable = getTableInstance();
     }
     

@@ -17,8 +17,6 @@
 package roll.learner.dfa.table;
 
 import roll.learner.LearnerType;
-import roll.learner.nba.lomega.PipedInputStream;
-import roll.learner.nba.lomega.PipedOutputStream;
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.table.ExprValue;
@@ -31,8 +29,8 @@ import roll.words.Alphabet;
 
 public class LearnerDFATableColumn extends LearnerDFATable {
 
-    public LearnerDFATableColumn(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
-        super(options, alphabet, membershipOracle, rollOut, rollIn);
+    public LearnerDFATableColumn(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle) {
+        super(options, alphabet, membershipOracle);
     }
 
     @Override

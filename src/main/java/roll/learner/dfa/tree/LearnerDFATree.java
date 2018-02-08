@@ -23,8 +23,6 @@ import gnu.trove.iterator.TIntObjectIterator;
 import roll.automata.DFA;
 import roll.automata.StateDFA;
 import roll.learner.LearnerDFA;
-import roll.learner.nba.lomega.PipedInputStream;
-import roll.learner.nba.lomega.PipedOutputStream;
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.query.Query;
@@ -50,8 +48,8 @@ public abstract class LearnerDFATree extends LearnerDFA {
     
     
 	public LearnerDFATree(Options options, Alphabet alphabet,
-			MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
-		super(options, alphabet, membershipOracle, rollOut, rollIn);
+			MembershipOracle<HashableValue> membershipOracle) {
+		super(options, alphabet, membershipOracle);
 		states = new ArrayList<>();
 	}
 	

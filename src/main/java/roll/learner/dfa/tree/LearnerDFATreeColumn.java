@@ -17,8 +17,6 @@
 package roll.learner.dfa.tree;
 
 import roll.learner.LearnerType;
-import roll.learner.nba.lomega.PipedInputStream;
-import roll.learner.nba.lomega.PipedOutputStream;
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.table.HashableValue;
@@ -30,8 +28,8 @@ import roll.words.Alphabet;
 
 public class LearnerDFATreeColumn extends LearnerDFATree {
 
-    public LearnerDFATreeColumn(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
-        super(options, alphabet, membershipOracle, rollOut, rollIn);
+    public LearnerDFATreeColumn(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle) {
+        super(options, alphabet, membershipOracle);
     }
 
     @Override

@@ -25,8 +25,7 @@ import roll.table.ExprValue;
 import roll.table.HashableValue;
 import roll.words.Alphabet;
 import roll.words.Word;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+
 /**
  * @author Yong Li (liyong@ios.ac.cn)
  * */
@@ -36,8 +35,8 @@ public abstract class LearnerDFA extends LearnerBase<DFA> {
     protected DFA dfa;
     
     public LearnerDFA(Options options, Alphabet alphabet
-            , MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
-        super(options, alphabet, membershipOracle, rollOut, rollIn);
+            , MembershipOracle<HashableValue> membershipOracle) {
+        super(options, alphabet, membershipOracle);
     }
     
     @Override

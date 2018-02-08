@@ -19,8 +19,6 @@ package roll.learner.dfa.tree;
 import roll.automata.DFA;
 import roll.automata.StateDFA;
 import roll.learner.LearnerType;
-import roll.learner.nba.lomega.PipedInputStream;
-import roll.learner.nba.lomega.PipedOutputStream;
 import roll.main.Options;
 import roll.oracle.MembershipOracle;
 import roll.table.ExprValue;
@@ -40,8 +38,8 @@ import roll.words.Word;
 
 public class LearnerDFATreeKV extends LearnerDFATree {
 
-    public LearnerDFATreeKV(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle, PipedOutputStream rollOut, PipedInputStream rollIn) {
-        super(options, alphabet, membershipOracle, rollOut, rollIn);
+    public LearnerDFATreeKV(Options options, Alphabet alphabet, MembershipOracle<HashableValue> membershipOracle) {
+        super(options, alphabet, membershipOracle);
     }
     
     @Override
