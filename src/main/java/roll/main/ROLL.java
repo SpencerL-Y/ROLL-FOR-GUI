@@ -73,7 +73,31 @@ public final class ROLL extends Thread{
         switch(options.runningMode) {
         case PLAYING:
             options.log.info("ROLL for interactive play...");
-            runPlayingMode(options);
+            byte[] alphabetBytes = new byte[1024];
+            
+            int len;
+			try {
+				len = this.rollIn.read(alphabetBytes);
+				String alphabetStr = new String(alphabetBytes, 0, len);
+	            this.rollOut.write("ALPHA OKAY".getBytes());
+	            byte[] alphaNumBytes = new byte[1024];
+	            len = this.rollIn.read(alphaNumBytes);
+	            String alphaNumStr = new String(alphaNumBytes, 0, len);
+	            alphaNumStr = alphaNumStr.trim();
+	            int alphaNum = Integer.getInteger(alphaNumStr);
+	            //parse alphabet
+	            String[] alphabetStrArray = new String[alphaNum];
+	            String[] splittedStrArray = alphabetStr.split("\\,");
+	            for(int i = 0; i < alphaNum; i ++) {
+	            	alphabetStrArray[i] = splittedStrArray[i].trim();
+	            }
+	            																	
+	            runPlayingMode(options, alphabetStrArray, len);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
             break;
         case LEARNING:
             options.log.info("ROLL for BA learning via rabit...");
@@ -85,8 +109,8 @@ public final class ROLL extends Thread{
 	}
     
     
-    public  void runPlayingMode(Options options) {
-        InteractiveMode.interact(options, this.rollOut, this.rollIn);
+    public  void runPlayingMode(Options options, String[] alpha, int alphaNum) {
+        InteractiveMode.interact(options, this.rollOut, this.rollIn, alpha, alphaNum);
     }
     
     public static void runLearningMode(Options options, boolean sampling, PipedOutputStream out, PipedInputStream in) {
