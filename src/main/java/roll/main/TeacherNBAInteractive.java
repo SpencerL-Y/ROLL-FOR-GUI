@@ -29,7 +29,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
         public HashableValue answerMembershipQuery(Query<HashableValue> query) {
             Word prefix = query.getPrefix();
             Word suffix = query.getSuffix();
-            String memQ = "Is w-word (" + prefix.toStringWithAlphabet() + ", " + suffix.toStringWithAlphabet()  + ") in the unknown languge: 1/0";
+            String memQ = "M-Is w-word (" + prefix.toStringWithAlphabet() + ", " + suffix.toStringWithAlphabet()  + ") in the unknown languge: 1/0";
             try {
 				this.rollOut.write(memQ.getBytes());
 			} catch (IOException e) {
@@ -51,7 +51,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
                 apList.add(hypothesis.getAlphabet().getLetter(i) + "");
             }
             assert hypothesis != null;
-            String equiQ = "Is following automaton the unknown automaton: 1/0?";
+            String equiQ = "E-Is following automaton the unknown automaton: 1/0?";
             System.out.println(equiQ);
             byte[] syncBytes = new byte[1024];
             int len;
@@ -60,7 +60,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 				len = this.rollIn.read(syncBytes);
 				String syncStr = new String(syncBytes, 0, len);
 	            syncStr = syncStr.trim();
-	            System.out.println("equiQ Question synced");
+	            System.out.println("S-equiQ Question synced");
 	            String hypothesisAutomata = hypothesis.toString(apList);
 	            this.rollOut.write(hypothesisAutomata.getBytes());
 			} catch (IOException e1) {

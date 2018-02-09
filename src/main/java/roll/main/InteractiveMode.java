@@ -112,9 +112,9 @@ public class InteractiveMode {
                     answer = false;
                     finished = true;
                 }else {
-                	String illeagal = "Illegal input, try again.";
+                	String illeagal = "I-Illegal input, try again!";
                 	rollOut.write(illeagal.getBytes());
-                    System.out.println("Illegal input, try again!");
+                    System.out.println("I-Illegal input, try again!");
                 }
             }
         } catch (IOException e) {
@@ -163,9 +163,9 @@ public class InteractiveMode {
                 if(valid) {
                     prefix = alphabet.getWordFromString(input);
                 }else  {
-                	String illegal = "Illegal input, try again!";
+                	String illegal = "I-Illegal input, try again!";
                 	rollOut.write(illegal.getBytes());
-                    System.out.println("Illegal input, try again!");
+                    System.out.println("I-Illegal input, try again!");
                 }
             }while(prefix == null);
             System.out.println("You input a stem: " + prefix.toStringWithAlphabet());
@@ -187,9 +187,9 @@ public class InteractiveMode {
                 if(valid) {
                     suffix = alphabet.getWordFromString(input);
                 } else  {
-                	String illegal = "Illegal input, try again!";
+                	String illegal = "I-Illegal input, try again!";
                 	rollOut.write(illegal.getBytes());
-                    System.out.println("Illegal input, try again!");
+                    System.out.println("I-Illegal input, try again!");
                 }
             }while(suffix == null);
             System.out.println("You input a loop: " + suffix.toStringWithAlphabet());
