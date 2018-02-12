@@ -87,12 +87,13 @@ public final class ROLL extends Thread{
 	            int alphaNum = Integer.getInteger(alphaNumStr);
 	            //parse alphabet
 	            String[] alphabetStrArray = new String[alphaNum];
-	            String[] splittedStrArray = alphabetStr.split("\\,");
+	           
 	            for(int i = 0; i < alphaNum; i ++) {
-	            	alphabetStrArray[i] = splittedStrArray[i].trim();
+	            	Character temp = alphabetStr.toCharArray()[i];
+	            	alphabetStrArray[i] = temp.toString();
 	            }
 	            																	
-	            runPlayingMode(options, alphabetStrArray, len);
+	            runPlayingMode(options, alphabetStrArray, alphaNum);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

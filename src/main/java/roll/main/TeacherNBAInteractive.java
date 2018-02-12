@@ -51,7 +51,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
                 apList.add(hypothesis.getAlphabet().getLetter(i) + "");
             }
             assert hypothesis != null;
-            String equiQ = "E-Is following automaton the unknown automaton: 1/0?";
+            String equiQ = "S-Is following automaton the unknown automaton: 1/0?";
             System.out.println(equiQ);
             byte[] syncBytes = new byte[1024];
             int len;
@@ -60,8 +60,9 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 				len = this.rollIn.read(syncBytes);
 				String syncStr = new String(syncBytes, 0, len);
 	            syncStr = syncStr.trim();
-	            System.out.println("S-equiQ Question synced");
-	            String hypothesisAutomata = hypothesis.toString(apList);
+	            assert (syncStr.toCharArray()[0] == 'A');
+	            System.out.println("E-equiQ Question synced");
+	            String hypothesisAutomata ="E-" + hypothesis.toString(apList);
 	            this.rollOut.write(hypothesisAutomata.getBytes());
 			} catch (IOException e1) {
 				e1.printStackTrace();
