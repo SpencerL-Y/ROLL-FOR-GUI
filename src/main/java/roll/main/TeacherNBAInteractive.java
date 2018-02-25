@@ -29,9 +29,10 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
         public HashableValue answerMembershipQuery(Query<HashableValue> query) {
             Word prefix = query.getPrefix();
             Word suffix = query.getSuffix();
-            String memQ = "M-Is w-word (" + prefix.toStringWithAlphabet() + ", " + suffix.toStringWithAlphabet()  + ") in the unknown languge: 1/0";
+            String memQ = "M-Is w-word (" + prefix.toStringWithAlphabet() + ", " + suffix.toStringWithAlphabet()  + ") in the unknown languge: Yes/No";
             try {
 				this.rollOut.write(memQ.getBytes());
+				this.rollOut.flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -57,6 +58,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
             int len;
 			try {
 				this.rollOut.write(equiQ.getBytes());
+				this.rollOut.flush();
 				len = this.rollIn.read(syncBytes);
 				String syncStr = new String(syncBytes, 0, len);
 	            syncStr = syncStr.trim();
@@ -64,6 +66,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 	            System.out.println("E-equiQ Question synced");
 	            String hypothesisAutomata ="E-" + hypothesis.toString(apList);
 	            this.rollOut.write(hypothesisAutomata.getBytes());
+	            this.rollOut.flush();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

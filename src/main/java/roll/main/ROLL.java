@@ -58,9 +58,11 @@ public final class ROLL extends Thread{
 	private PipedInputStream rollIn;
 	
 	public ROLL(String[] args, PipedInputStream intIn, PipedOutputStream intOut) throws IOException {
+		System.out.println("Initializing ROLL");
 		this.args = args;
 ;		this.rollOut = new PipedOutputStream(intIn);
 		this.rollIn = new PipedInputStream(intOut);
+		System.out.println("Initializing ROLL over");
 	}
 	
 	@Override
@@ -75,30 +77,46 @@ public final class ROLL extends Thread{
             options.log.info("ROLL for interactive play...");
             byte[] alphabetBytes = new byte[1024];
             
-            int len;
+            int len = 0;
+            String alphabetStr = null;
 			try {
 				len = this.rollIn.read(alphabetBytes);
-				String alphabetStr = new String(alphabetBytes, 0, len);
-	            this.rollOut.write("ALPHA OKAY".getBytes());
-	            byte[] alphaNumBytes = new byte[1024];
-	            len = this.rollIn.read(alphaNumBytes);
-	            String alphaNumStr = new String(alphaNumBytes, 0, len);
-	            alphaNumStr = alphaNumStr.trim();
-	            int alphaNum = Integer.getInteger(alphaNumStr);
-	            //parse alphabet
-	            String[] alphabetStrArray = new String[alphaNum];
-	           
-	            for(int i = 0; i < alphaNum; i ++) {
-	            	Character temp = alphabetStr.toCharArray()[i];
-	            	alphabetStrArray[i] = temp.toString();
-	            }
-	            																	
-	            runPlayingMode(options, alphabetStrArray, alphaNum);
+				alphabetStr = new String(alphabetBytes, 0, len);
+	            this.rollOut.write(("ALPHA OKAY " + alphabetStr).getBytes());
+	            this.rollOut.flush(); 
+	            
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-            
+			byte[] alphaNumBytes = new byte[1024];
+            try {
+				len = this.rollIn.read(alphaNumBytes);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            //assert(alphaNumBytes != null);
+            String alphaNumStr = new String(alphaNumBytes, 0, len);
+            alphaNumStr = alphaNumStr.trim();
+            int alphaNum = Integer.parseInt(alphaNumStr);
+            //parse alphabet
+            String[] alphabetStrArray = new String[alphaNum];
+           
+            for(int i = 0; i < alphaNum; i ++) {
+            	Character temp = alphabetStr.toCharArray()[i];
+            	alphabetStrArray[i] = "" + temp;
+            }
+            																	
+            runPlayingMode(options, alphabetStrArray, alphaNum);
+            try {
+            	//System.out.println("pipe Close");
+				this.rollOut.close();
+				this.rollIn.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+           
             break;
         case LEARNING:
             options.log.info("ROLL for BA learning via rabit...");

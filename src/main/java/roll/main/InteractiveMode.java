@@ -62,11 +62,12 @@ public class InteractiveMode {
     
     private static Alphabet prepareAlphabet(Options options, String[] alpha, int alphaNum) {
         Alphabet alphabet = new Alphabet();
-        System.out.println("Please input the number of letters ('a'-'z'): ");
+        System.out.println("Please input the number of letters ('a'-'z'): " + alphaNum);
         int numLetters = alphaNum;
         for(int letterNr = 0; letterNr < numLetters; letterNr ++) {
-            System.out.println("Please input the " + (letterNr + 1) + "th letter: ");
-            char letter = alpha[letterNr].toCharArray()[0];
+            System.out.println("Please input the " + (letterNr + 1) + "th letter: " + alpha[letterNr]);
+            Character letter = alpha[letterNr].toCharArray()[0];
+            System.out.println(letter);
             alphabet.addLetter(letter);
         }
         return alphabet;
@@ -146,52 +147,46 @@ public class InteractiveMode {
         System.out.println("Now you have to input a counterexample for inequivalence.");
         try {
             do {
-                System.out.println("please input stem: ");
+                System.out.println("please input ce: ");
                 byte[] inputBytes = new byte[1024];
                 int len = rollIn.read(inputBytes);
                 String input = new String(inputBytes, 0, len);
                 input = input.trim();
-                System.out.println("input stem is " + input);
+                System.out.println("input counterexample: " + input);
+                String[] splittedCounterexample = input.split("\\,");
+                String stem = splittedCounterexample[0];
+                stem = stem.trim();
+                String loop = splittedCounterexample[1];
+                loop = loop.trim();
+                System.out.println("input stem is " + stem);
+                System.out.println("input loop is " + loop);
                 boolean valid = true;
-                for(int i = 0; i < input.length(); i ++) {
-                    int letter = alphabet.indexOf(input.charAt(i));
+                for(int i = 0; i < stem.length(); i ++) {
+                    int letter = alphabet.indexOf(stem.charAt(i));
+                    if(letter < 0) {
+                        valid = false;
+                        break;
+                    }
+                }
+                for(int i = 0; i < loop.length(); i ++) {
+                    int letter = alphabet.indexOf(loop.charAt(i));
                     if(letter < 0) {
                         valid = false;
                         break;
                     }
                 }
                 if(valid) {
-                    prefix = alphabet.getWordFromString(input);
+                    prefix = alphabet.getWordFromString(stem);
+                    suffix = alphabet.getWordFromString(loop);
+                    System.out.println("OK");
                 }else  {
                 	String illegal = "I-Illegal input, try again!";
                 	rollOut.write(illegal.getBytes());
+                	rollOut.flush();
                     System.out.println("I-Illegal input, try again!");
                 }
-            }while(prefix == null);
+            }while(prefix == null || suffix == null);
             System.out.println("You input a stem: " + prefix.toStringWithAlphabet());
-            do {
-                System.out.println("please input loop: ");
-                byte[] inputBytes = new byte[1024];
-                int len = rollIn.read(inputBytes);
-                String input = new String(inputBytes, 0, len);
-                input = input.trim();
-                System.out.println("input stem is " + input);
-                boolean valid = true;
-                for(int i = 0; i < input.length(); i ++) {
-                    int letter = alphabet.indexOf(input.charAt(i));
-                    if(letter < 0) {
-                        valid = false;
-                        break;
-                    }
-                }
-                if(valid) {
-                    suffix = alphabet.getWordFromString(input);
-                } else  {
-                	String illegal = "I-Illegal input, try again!";
-                	rollOut.write(illegal.getBytes());
-                    System.out.println("I-Illegal input, try again!");
-                }
-            }while(suffix == null);
             System.out.println("You input a loop: " + suffix.toStringWithAlphabet());
         } catch (IOException e) {
             e.printStackTrace();
