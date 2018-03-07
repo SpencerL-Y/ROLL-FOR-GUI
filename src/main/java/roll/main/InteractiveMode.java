@@ -96,7 +96,7 @@ public class InteractiveMode {
     
     
     //Okay
-    public static boolean getInputAnswer(PipedOutputStream rollOut, PipedInputStream rollIn) {
+    public static boolean getInputAnswer(PipedOutputStream rollOut, PipedInputStream rollIn, Boolean isEqui) {
         boolean answer = false;
         try {
             boolean finished = false;
@@ -105,18 +105,18 @@ public class InteractiveMode {
             	int len = rollIn.read(inputBytes);
             	String input = new String(inputBytes, 0, len);
             	input = input.trim();
-            	System.out.println(input);
+            	System.out.println(input + "here");
                 if(input.equals("1")) {
                     answer = true;
                     finished = true;
                 }else if(input.equals("0")) {
                     answer = false;
                     finished = true;
-                }else {
-                	String illeagal = "I-Illegal input, try again!";
-                	rollOut.write(illeagal.getBytes());
-                    System.out.println("I-Illegal input, try again!");
                 }
+            }
+            if(isEqui) {
+            	rollOut.write("S-equiSync".getBytes());
+            	rollOut.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();

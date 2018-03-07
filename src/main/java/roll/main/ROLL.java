@@ -54,8 +54,8 @@ import roll.util.Timer;
 public final class ROLL extends Thread{
 	
 	private String[] args;
-	private PipedOutputStream rollOut;
-	private PipedInputStream rollIn;
+	static private PipedOutputStream rollOut;
+	static private PipedInputStream rollIn;
 	
 	public ROLL(String[] args, PipedInputStream intIn, PipedOutputStream intOut) throws IOException {
 		System.out.println("Initializing ROLL");

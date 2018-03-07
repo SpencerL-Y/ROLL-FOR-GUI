@@ -1,8 +1,13 @@
 package roll.main;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +43,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 				e.printStackTrace();
 			}
             System.out.println(memQ);
-            boolean answer = InteractiveMode.getInputAnswer(this.rollOut, this.rollIn);
+            boolean answer = InteractiveMode.getInputAnswer(this.rollOut, this.rollIn, false);
             HashableValue result = new HashableValueBoolean(answer);
             query.answerQuery(result);
             return result;
@@ -65,12 +70,22 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 	            assert (syncStr.toCharArray()[0] == 'A');
 	            System.out.println("E-equiQ Question synced");
 	            String hypothesisAutomata ="E-" + hypothesis.toString(apList);
-	            this.rollOut.write(hypothesisAutomata.getBytes());
+	            try (Writer schreiber = new BufferedWriter(new OutputStreamWriter(
+	            //TODO: change the path when release
+	            new FileOutputStream("C:\\Users\\10244\\Desktop\\testFile.txt"), "utf-8"))) {
+	            	schreiber.write(hypothesisAutomata);
+	            }
+	            FileWriter writer;
+	            writer = new FileWriter("automata.txt");
+	            writer.write(hypothesisAutomata);
+	            writer.flush();
+	            writer.close();
+	            this.rollOut.write("E-check automata".getBytes());
 	            this.rollOut.flush();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-            boolean answer = InteractiveMode.getInputAnswer(rollOut, rollIn);
+            boolean answer = InteractiveMode.getInputAnswer(rollOut, rollIn, true);
             Word wordEmpty = hypothesis.getAlphabet().getEmptyWord();
             Query<HashableValue> ceQuery = new QuerySimple<>(wordEmpty, wordEmpty);
             ceQuery.answerQuery(new HashableValueBoolean(answer));
