@@ -75,11 +75,7 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 	            new FileOutputStream("C:\\Users\\10244\\Desktop\\testFile.txt"), "utf-8"))) {
 	            	schreiber.write(hypothesisAutomata);
 	            }
-	            FileWriter writer;
-	            writer = new FileWriter("automata.txt");
-	            writer.write(hypothesisAutomata);
-	            writer.flush();
-	            writer.close();
+	            System.out.println("write to file");
 	            this.rollOut.write("E-check automata".getBytes());
 	            this.rollOut.flush();
 			} catch (IOException e1) {

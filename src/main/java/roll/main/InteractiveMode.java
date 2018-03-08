@@ -72,27 +72,6 @@ public class InteractiveMode {
         }
         return alphabet;
     }
-    //TODO:move this to the front end
-//    private static char getLetter(Alphabet alphabet) {
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//        char letter = 0;
-//        do {
-//            try {
-//                String line = reader.readLine();
-//                letter = line.charAt(0);
-//            } catch (IOException e1) {
-//                e1.printStackTrace();
-//            }
-//            if (letter < 'a' || letter > 'z')
-//                System.out.println("Illegal input, try again!");
-//            else if(alphabet.indexOf(letter) >= 0){
-//                System.out.println("Duplicate input letter, try again!");
-//            }else {
-//                break;
-//            }
-//        } while (true);
-//        return letter;
-//    }
     
     
     //Okay
