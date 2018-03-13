@@ -29,7 +29,7 @@ class WordEmpty extends WordAbstract {
 	}
 
 	public String toString() {
-		return "ϵ";
+		return "\\eps";
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package roll.main;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
@@ -39,7 +38,6 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 				this.rollOut.write(memQ.getBytes());
 				this.rollOut.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             System.out.println(memQ);
@@ -70,9 +68,10 @@ public class TeacherNBAInteractive implements Teacher<NBA, Query<HashableValue>,
 	            assert (syncStr.toCharArray()[0] == 'A');
 	            System.out.println("E-equiQ Question synced");
 	            String hypothesisAutomata ="E-" + hypothesis.toString(apList);
+	            System.out.println(hypothesisAutomata);
 	            try (Writer schreiber = new BufferedWriter(new OutputStreamWriter(
 	            //TODO: change the path when release
-	            new FileOutputStream("C:\\Users\\10244\\Desktop\\testFile.txt"), "utf-8"))) {
+	            new FileOutputStream("testFile.txt"), "utf-8"))) {
 	            	schreiber.write(hypothesisAutomata);
 	            }
 	            System.out.println("write to file");
