@@ -20,28 +20,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
-import roll.automata.FDFA;
 import roll.automata.NBA;
-import roll.automata.operations.NBAGenerator;
 import roll.automata.operations.NBAOperations;
-import roll.automata.operations.nba.inclusion.NBAInclusionCheckTool;
-import roll.learner.fdfa.LearnerFDFA;
-import roll.learner.nba.lomega.UtilLOmega;
-import roll.learner.nba.lomega.translator.TranslatorFDFA;
-import roll.learner.nba.lomega.translator.TranslatorFDFAUnder;
-import roll.main.complement.TeacherNBAComplement;
-import roll.main.inclusion.NBAInclusionCheck;
-import roll.parser.PairParser;
 import roll.parser.Parser;
 import roll.parser.UtilParser;
-import roll.query.Query;
-import roll.table.HashableValue;
-import roll.table.HashableValueBoolean;
 import roll.util.Timer;
 
 /**
@@ -54,8 +40,8 @@ import roll.util.Timer;
 public final class ROLL extends Thread{
 	
 	private String[] args;
-	static private PipedOutputStream rollOut;
-	static private PipedInputStream rollIn;
+	private PipedOutputStream rollOut;
+	private PipedInputStream rollIn;
 	
 	public ROLL(String[] args, PipedInputStream intIn, PipedOutputStream intOut) throws IOException {
 		System.out.println("Initializing ROLL");
@@ -86,14 +72,12 @@ public final class ROLL extends Thread{
 	            this.rollOut.flush(); 
 	            
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			byte[] alphaNumBytes = new byte[1024];
             try {
 				len = this.rollIn.read(alphaNumBytes);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             //assert(alphaNumBytes != null);
@@ -120,7 +104,11 @@ public final class ROLL extends Thread{
             break;
         case LEARNING:
             options.log.info("ROLL for BA learning via rabit...");
-            runLearningMode(options, false, this.rollOut, this.rollIn);
+			try {
+				runLearningMode(options, false, this.rollOut, this.rollIn);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
             break;
         default :
                 options.log.err("Incorrect running mode.");
@@ -132,7 +120,7 @@ public final class ROLL extends Thread{
         InteractiveMode.interact(options, this.rollOut, this.rollIn, alpha, alphaNum);
     }
     
-    public static void runLearningMode(Options options, boolean sampling, PipedOutputStream out, PipedInputStream in) {
+    public static void runLearningMode(Options options, boolean sampling, PipedOutputStream out, PipedInputStream in) throws IOException{
 
         Timer timer = new Timer();
         timer.start();
@@ -145,7 +133,7 @@ public final class ROLL extends Thread{
         
         if(sampling) {
             Executor.executeSampler(options, target);
-        }else {
+        } else {
             Executor.executeRABIT(options, target);
         }
         timer.stop();
@@ -162,6 +150,17 @@ public final class ROLL extends Thread{
             parser.print(target, options.log.getOutputStream());
             options.log.println("\nhypothesis automaton:");
             parser.print(options.stats.hypothesis, options.log.getOutputStream());
+            //TODO: change path when release
+            File file = new File("C:\\Users\\10244\\Desktop\\outputBA.ba");
+            FileOutputStream fop = new FileOutputStream(file);
+            PrintWriter writer = new PrintWriter(file);
+            writer.write("");
+            writer.close();
+            parser.print(options.stats.hypothesis, fop);
+            fop.flush();
+            fop.close();
+            out.write("C-Complete".getBytes());
+            out.flush();
         }
         parser.close();
         // output statistics

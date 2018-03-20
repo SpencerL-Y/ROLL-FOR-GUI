@@ -40,7 +40,7 @@ public class Executor {
     
     public static void executeRABIT(Options options, NBA target) {
         TeacherNBARABIT teacher = new TeacherNBARABIT(options, target);
-        Executor.execute(options, target, teacher);
+		Executor.execute(options, target, teacher);
     }
     
     public static void executeSampler(Options options, NBA target) {
@@ -74,6 +74,7 @@ public class Executor {
     private static void execute(Options options, NBA target,
             TeacherNBA teacher) {
         LearnerBase<NBA> learner = getLearner(options, target.getAlphabet(), teacher);
+  
         Timer timer = new Timer();
         options.log.println("Initializing learner...");
         timer.start();
@@ -82,10 +83,12 @@ public class Executor {
         options.stats.timeOfLearner += timer.getTimeElapsed();
         NBA hypothesis = null;
         while(true) {
-            options.log.verbose("Table/Tree is both closed and consistent\n" + learner.toString());
+        	String add = "Table/Tree is both closed and consistent\n" + learner.toString();
+            options.log.verbose(add);
             hypothesis = learner.getHypothesis();
             // along with ce
-            options.log.println("Resolving equivalence query for hypothesis (#Q=" + hypothesis.getStateSize() + ")...  ");
+            add = "Resolving equivalence query for hypothesis (#Q=" + hypothesis.getStateSize() + ")...  ";
+            options.log.println(add);
             Query<HashableValue> ceQuery = teacher.answerEquivalenceQuery(hypothesis);
             boolean isEq = ceQuery.getQueryAnswer().get();
             if(isEq) {
